@@ -1,0 +1,45 @@
+{
+  "name": "orchestrator",
+  "description": "Autonomous Development Orchestrator - Transform ideas into production-ready applications through multi-agent pipeline. Spec → Plan → Tasks → 100% Working App.",
+  "version": "0.1.0",
+  "author": {
+    "name": "ClaudeForge"
+  },
+  "repository": "https://github.com/claudeforge/orchestrator",
+  "license": "MIT",
+  "hooks": "./hooks.json",
+  "commands": {
+    "orch-start": {
+      "description": "Start new project from idea - begins the autonomous development pipeline",
+      "source": "./commands/start.md"
+    },
+    "orch-continue": {
+      "description": "Resume autonomous development from current state",
+      "source": "./commands/continue.md"
+    },
+    "orch-status": {
+      "description": "Show progress dashboard with current phase and metrics",
+      "source": "./commands/status.md"
+    },
+    "orch-tasks": {
+      "description": "List all tasks with their current status",
+      "source": "./commands/tasks.md"
+    },
+    "orch-pause": {
+      "description": "Pause orchestrator after completing current task",
+      "source": "./commands/pause.md"
+    },
+    "orch-resume": {
+      "description": "Resume a paused orchestrator session",
+      "source": "./commands/resume.md"
+    },
+    "orch-rollback": {
+      "description": "Revert to a previous checkpoint",
+      "source": "./commands/rollback.md"
+    },
+    "orch-help": {
+      "description": "Show help and available commands",
+      "source": "./commands/help.md"
+    }
+  }
+}

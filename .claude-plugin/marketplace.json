@@ -1,0 +1,33 @@
+{
+  "name": "claude-orchestrator",
+  "owner": {
+    "name": "ClaudeForge",
+    "email": "info@claudeforge.dev"
+  },
+  "metadata": {
+    "description": "Autonomous Development Orchestrator - Transform ideas into production-ready applications through multi-agent pipeline",
+    "version": "v0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "orchestrator",
+      "source": ".",
+      "description": "Autonomous Development Orchestrator for Claude Code. Spec → Plan → Tasks → 100% Working App. Multi-agent pipeline with zero manual intervention.",
+      "version": "v0.1.0",
+      "author": {
+        "name": "ClaudeForge"
+      },
+      "license": "MIT",
+      "keywords": [
+        "orchestrator",
+        "autonomous",
+        "multi-agent",
+        "automation",
+        "pipeline",
+        "spec-to-app",
+        "code-generation"
+      ],
+      "category": "productivity"
+    }
+  ]
+}

@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "orchestrator",
-      "source": ".",
+      "source": "./",
       "description": "Autonomous Development Orchestrator for Claude Code. Spec → Plan → Tasks → 100% Working App. Multi-agent pipeline with zero manual intervention.",
       "version": "v0.1.0",
       "author": {

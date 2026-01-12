@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Test coverage
+coverage/
+
+# Runtime state (user-specific)
+.claude/orchestrator/state/
+.claude/orchestrator/checkpoints/
+.claude/orchestrator/sessions/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Cache
+.cache/
+.turbo/

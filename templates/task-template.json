@@ -1,0 +1,101 @@
+{
+  "$schema": "orchestrator-tasks-v1",
+  "projectId": "{{PROJECT_ID}}",
+  "generatedAt": "{{TIMESTAMP}}",
+  "epics": [
+    {
+      "id": "epic-setup",
+      "title": "Project Setup",
+      "description": "Initial project structure and configuration",
+      "stories": [
+        {
+          "id": "US-001",
+          "title": "Project Initialization",
+          "description": "Set up the base project with all tooling",
+          "tasks": ["TASK-001", "TASK-002", "TASK-003"]
+        }
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "title": "Initialize project structure",
+      "description": "Create the base directory structure and configuration files",
+      "status": "pending",
+      "priority": "critical",
+      "agent": "orchestrator",
+      "epic": "epic-setup",
+      "story": "US-001",
+      "dependencies": [],
+      "outputs": [
+        "package.json",
+        "tsconfig.json",
+        ".eslintrc.json",
+        ".prettierrc"
+      ],
+      "acceptanceCriteria": [
+        "package.json with all dependencies",
+        "TypeScript configured with strict mode",
+        "ESLint and Prettier configured",
+        "Scripts for build, test, lint"
+      ],
+      "estimatedMinutes": 15,
+      "maxAttempts": 3
+    },
+    {
+      "id": "TASK-002",
+      "title": "Setup frontend application",
+      "description": "Initialize React application with Vite and configure base structure",
+      "status": "pending",
+      "priority": "critical",
+      "agent": "frontend-dev",
+      "epic": "epic-setup",
+      "story": "US-001",
+      "dependencies": ["TASK-001"],
+      "outputs": [
+        "apps/web/package.json",
+        "apps/web/vite.config.ts",
+        "apps/web/src/main.tsx",
+        "apps/web/src/App.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Vite configured with React plugin",
+        "TypeScript configured",
+        "Tailwind CSS integrated",
+        "Base App component renders"
+      ],
+      "estimatedMinutes": 15,
+      "maxAttempts": 3
+    },
+    {
+      "id": "TASK-003",
+      "title": "Setup backend application",
+      "description": "Initialize Hono API server with base configuration",
+      "status": "pending",
+      "priority": "critical",
+      "agent": "backend-dev",
+      "epic": "epic-setup",
+      "story": "US-001",
+      "dependencies": ["TASK-001"],
+      "outputs": [
+        "apps/api/package.json",
+        "apps/api/src/index.ts",
+        "apps/api/src/routes/health.ts"
+      ],
+      "acceptanceCriteria": [
+        "Hono server configured",
+        "Health check endpoint works",
+        "TypeScript configured",
+        "Error handling middleware"
+      ],
+      "estimatedMinutes": 15,
+      "maxAttempts": 3
+    }
+  ],
+  "dependencyGraph": {
+    "TASK-001": [],
+    "TASK-002": ["TASK-001"],
+    "TASK-003": ["TASK-001"]
+  }
+}

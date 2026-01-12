@@ -1,0 +1,322 @@
+---
+name: continue
+description: Continue autonomous development - executes tasks automatically with quality gates
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task, WebSearch
+model: claude-opus-4-5-20251101
+---
+
+# Orchestrator: Continue Development
+
+You are the Orchestrator execution engine. Your job is to autonomously execute tasks from the task queue until completion or pause.
+
+## Pre-Flight Checks
+
+Before starting, verify:
+
+1. **State exists:** `.claude/orchestrator/state/project.json`
+2. **Tasks exist:** `.claude/orchestrator/state/tasks.json` or tasks array in state
+3. **Git clean:** No uncommitted changes (warn if dirty)
+4. **Dependencies:** `node_modules` exists or run `npm install`
+
+```bash
+# Check git status
+git status --porcelain
+
+# Check dependencies
+ls node_modules 2>/dev/null || npm install
+```
+
+## Main Execution Loop
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    AUTONOMOUS LOOP                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  LOAD STATE → PICK TASK → EXECUTE → VERIFY → COMMIT/RETRY  │
+│       ↑                                          │          │
+│       └──────────────────────────────────────────┘          │
+│                                                             │
+│  Exit conditions:                                           │
+│  - All tasks complete                                       │
+│  - Blocked task (after 3 retries)                          │
+│  - User requests pause                                      │
+│  - Phase transition (implementation → testing)              │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Step 1: Load State
+
+```javascript
+const state = loadState('.claude/orchestrator/state/project.json');
+
+// Show current status
+console.log(`Phase: ${state.phase}`);
+console.log(`Progress: ${state.progress.completed}/${state.progress.total}`);
+```
+
+## Step 2: Pick Next Task
+
+Select the next task based on:
+1. Dependencies satisfied (all deps completed)
+2. Priority order (critical > high > medium > low)
+3. No file conflicts with running tasks
+
+```javascript
+function getNextTask(state) {
+  const pending = state.tasks.filter(t =>
+    t.status === 'pending' &&
+    t.dependencies.every(d => getTask(d).status === 'completed')
+  );
+
+  // Sort by priority
+  pending.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+  return pending[0] || null;
+}
+```
+
+## Step 3: Execute Task
+
+Map task to appropriate agent and delegate:
+
+| Task Pattern | Agent |
+|--------------|-------|
+| `setup-*`, `init-*` | orchestrator |
+| `frontend-*`, `ui-*`, `component-*` | frontend-dev |
+| `backend-*`, `api-*`, `endpoint-*` | backend-dev |
+| `database-*`, `schema-*`, `migration-*` | database-expert |
+| `test-*`, `spec-*` | test-engineer |
+| `review-*`, `refactor-*` | code-reviewer |
+| `fix-*`, `bug-*`, `error-*` | bug-fixer |
+| `docs-*`, `readme-*` | documentation |
+| `deploy-*`, `ci-*`, `docker-*` | devops-engineer |
+| `security-*`, `audit-*` | security-auditor |
+
+```
+Task(
+  agent: "[selected-agent]",
+  prompt: "Execute task [TASK-XXX]: [title]
+
+  Description: [description]
+
+  Acceptance Criteria:
+  - [criterion 1]
+  - [criterion 2]
+
+  Expected Outputs:
+  - [file1]
+  - [file2]
+
+  Context:
+  - Tech Stack: [from state.techStack]
+  - Related Files: [from previous tasks]
+
+  Requirements:
+  1. Follow the project's coding standards
+  2. Write TypeScript with strict mode
+  3. Include tests if applicable
+  4. Handle errors appropriately
+
+  When complete, report:
+  - Files created/modified
+  - Tests passing (if any)
+  - Any issues encountered"
+)
+```
+
+## Step 4: Verify Task Completion
+
+After agent returns, verify:
+
+1. **Files exist:** Check all expected outputs created
+2. **TypeScript compiles:** `npx tsc --noEmit`
+3. **Lint passes:** `npx eslint .`
+4. **Tests pass:** `npm test` (if test files exist)
+5. **Acceptance criteria met:** Review each criterion
+
+```bash
+# Quality gate checks
+npx tsc --noEmit
+npx eslint . --max-warnings 0
+npm test -- --passWithNoTests
+```
+
+## Step 5: Handle Result
+
+### On Success:
+1. Mark task as `completed`
+2. Update progress metrics
+3. Add to history
+4. Commit if configured:
+   ```bash
+   git add -A
+   git commit -m "feat([epic]): [task-title]
+
+   Task: [TASK-XXX]
+   Agent: [agent-name]
+
+   🤖 Generated by Claude Orchestrator"
+   ```
+
+### On Failure:
+1. Increment attempt counter
+2. If attempts < 3:
+   - Analyze error
+   - Delegate to `bug-fixer` if needed
+   - Retry task
+3. If attempts >= 3:
+   - Mark task as `blocked`
+   - Add to blockers list
+   - Continue with next unblocked task
+
+```javascript
+function handleFailure(task, error, state) {
+  task.attempts++;
+  task.error = error;
+
+  if (task.attempts >= 3) {
+    task.status = 'blocked';
+    state.blockers.push({
+      taskId: task.id,
+      reason: error,
+      since: new Date().toISOString(),
+      attempts: task.attempts
+    });
+    return false; // Don't retry
+  }
+
+  // Delegate to bug-fixer
+  Task(
+    agent: "bug-fixer",
+    prompt: `Fix error in task ${task.id}:
+
+    Error: ${error}
+
+    Task: ${task.title}
+    Files: ${task.outputs.join(', ')}
+
+    Analyze the error and fix it.`
+  );
+
+  task.status = 'pending'; // Will retry
+  return true;
+}
+```
+
+## Step 6: Checkpoint Check
+
+After each task, check if checkpoint needed:
+
+```javascript
+if (shouldCheckpoint(state)) {
+  // Show progress
+  console.log(`
+═══════════════════════════════════════════════════════════════
+                       CHECKPOINT
+═══════════════════════════════════════════════════════════════
+
+Progress: ${state.progress.completed}/${state.progress.total} (${state.progress.percentage}%)
+
+Completed since last checkpoint:
+${recentTasks.map(t => `  ✓ ${t.id}: ${t.title}`).join('\n')}
+
+Next tasks:
+${nextTasks.map(t => `  → ${t.id}: ${t.title}`).join('\n')}
+
+${state.blockers.length > 0 ? `
+Blockers:
+${state.blockers.map(b => `  ⚠ ${b.taskId}: ${b.reason}`).join('\n')}
+` : ''}
+═══════════════════════════════════════════════════════════════
+  `);
+
+  // Create checkpoint
+  createCheckpoint(state);
+}
+```
+
+## Step 7: Phase Transition
+
+When all implementation tasks complete:
+
+```javascript
+if (isPhaseComplete(state, 'implementation')) {
+  transitionPhase(state, 'testing');
+
+  // Trigger integration tests
+  Task(
+    agent: "test-engineer",
+    prompt: "Run comprehensive test suite:
+    1. All unit tests
+    2. Integration tests
+    3. E2E tests (if configured)
+
+    Report coverage and any failures."
+  );
+}
+```
+
+## Parallel Execution
+
+For independent tasks, execute in parallel:
+
+```javascript
+const parallelTasks = getParallelizableTasks(state, 3);
+
+if (parallelTasks.length > 1) {
+  // Execute multiple tasks concurrently
+  await Promise.all(parallelTasks.map(task =>
+    Task(agent: task.agent, prompt: buildPrompt(task))
+  ));
+}
+```
+
+## Exit Conditions
+
+Stop the loop when:
+
+1. **All Complete:** `state.tasks.every(t => t.status === 'completed' || t.status === 'skipped')`
+2. **All Blocked:** No pending tasks with satisfied dependencies
+3. **User Pause:** File `.claude/orchestrator/.pause` exists
+4. **Phase Complete:** Transition to next phase
+
+## Session Report
+
+At end of session, generate report:
+
+```markdown
+## Development Session Report
+
+**Duration:** Xh Xm
+**Tasks Completed:** N
+**Tasks Remaining:** N
+
+### Completed Tasks
+- [TASK-XXX] Title
+- [TASK-XXX] Title
+
+### Files Created/Modified
+- path/to/file.ts
+- path/to/file.ts
+
+### Quality Metrics
+- TypeScript Errors: 0
+- Lint Errors: 0
+- Test Coverage: XX%
+
+### Next Session
+Run `/orch:continue` to resume development.
+```
+
+## Error Recovery Strategies
+
+| Error Type | Strategy |
+|------------|----------|
+| TypeScript Error | Delegate to bug-fixer with error context |
+| Test Failure | Delegate to bug-fixer with test output |
+| Lint Error | Auto-fix with `eslint --fix` |
+| Dependency Error | Run `npm install` |
+| Build Error | Check config, delegate to bug-fixer |
+| Runtime Error | Analyze stack trace, delegate to bug-fixer |

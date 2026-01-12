@@ -6,7 +6,7 @@ allowed-tools: Read, Glob
 Display the current project status from the orchestrator state.
 ## Instructions
 1. Read the state file at `.claude/orchestrator/state/project.json`
-2. If it doesn't exist, inform the user to run `/orch:start` first
+2. If it doesn't exist, inform the user to run `/orchestrator:start` first
 3. Display a comprehensive status dashboard
 ## Status Dashboard Format
 ```markdown
@@ -62,10 +62,10 @@ Phases:
 | CP-003 | 09:45   | 15    | def456  |
 | CP-002 | 09:00   | 10    | ghi789  |
 ## Commands
-- `/orch:continue` - Resume autonomous development
-- `/orch:tasks` - View all tasks
-- `/orch:pause` - Pause after current task
-- `/orch:rollback CP-003` - Rollback to checkpoint
+- `/orchestrator:continue` - Resume autonomous development
+- `/orchestrator:tasks` - View all tasks
+- `/orchestrator:pause` - Pause after current task
+- `/orchestrator:rollback CP-003` - Rollback to checkpoint
 ```
 ## State File Schema
 The state file contains:
@@ -90,6 +90,6 @@ The state file contains:
 }
 ```
 ## Error Handling
-- If state file doesn't exist: Show message to run `/orch:start`
+- If state file doesn't exist: Show message to run `/orchestrator:start`
 - If state file is corrupted: Suggest rollback to last checkpoint
 - If no tasks: Show planning phase status

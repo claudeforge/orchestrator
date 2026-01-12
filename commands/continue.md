@@ -234,7 +234,7 @@ At end of session, generate report:
 - Lint Errors: 0
 - Test Coverage: XX%
 ### Next Session
-Run `/orch:continue` to resume development.
+Run `/orchestrator:continue` to resume development.
 ```
 ## Error Recovery Strategies
 | Error Type | Strategy |

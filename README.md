@@ -8,6 +8,16 @@ Transform ideas into production-ready applications with zero manual intervention
 Spec → Plan → Tasks → 100% Working App
 ```
 
+## Installation
+
+```bash
+# Add the marketplace
+/plugin marketplace add claudeforge/orchestrator
+
+# Install the plugin
+/plugin install orchestrator@claudeforge-orchestrator
+```
+
 ## Features
 
 - **Multi-Agent Orchestration** - 12+ specialized agents working in coordination
@@ -22,7 +32,7 @@ Spec → Plan → Tasks → 100% Working App
 ### 1. Start a New Project
 
 ```
-/orch:start
+/orchestrator:start
 ```
 
 Follow the prompts to describe your project idea. The orchestrator will:
@@ -33,7 +43,7 @@ Follow the prompts to describe your project idea. The orchestrator will:
 ### 2. Begin Autonomous Development
 
 ```
-/orch:continue
+/orchestrator:continue
 ```
 
 The orchestrator will automatically:
@@ -46,7 +56,7 @@ The orchestrator will automatically:
 ### 3. Monitor Progress
 
 ```
-/orch:status
+/orchestrator:status
 ```
 
 View:
@@ -59,14 +69,14 @@ View:
 
 | Command | Description |
 |---------|-------------|
-| `/orch:start` | Initialize a new project from an idea |
-| `/orch:continue` | Run autonomous development loop |
-| `/orch:status` | Show progress dashboard |
-| `/orch:tasks` | List all tasks with status |
-| `/orch:pause` | Pause after current task |
-| `/orch:resume` | Resume paused session |
-| `/orch:rollback <CP>` | Rollback to checkpoint |
-| `/orch:help` | Show documentation |
+| `/orchestrator:start` | Initialize a new project from an idea |
+| `/orchestrator:continue` | Run autonomous development loop |
+| `/orchestrator:status` | Show progress dashboard |
+| `/orchestrator:tasks` | List all tasks with status |
+| `/orchestrator:pause` | Pause after current task |
+| `/orchestrator:resume` | Resume paused session |
+| `/orchestrator:rollback <CP>` | Rollback to checkpoint |
+| `/orchestrator:help` | Show documentation |
 
 ## Architecture
 
@@ -75,7 +85,7 @@ View:
 │                    ORCHESTRATOR CORE                         │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│  COMMANDS (/orch:*)                                         │
+│  COMMANDS (/orchestrator:*)                                         │
 │  └── start, continue, status, tasks, pause, rollback        │
 │                                                             │
 │  BRAIN (Orchestrator Agent)                                 │
@@ -252,7 +262,7 @@ The orchestrator has built-in expertise for:
 
 ```
 orchestrator/
-├── commands/           # Slash commands (/orch:*)
+├── commands/           # Slash commands (/orchestrator:*)
 │   ├── start.md
 │   ├── continue.md
 │   ├── status.md

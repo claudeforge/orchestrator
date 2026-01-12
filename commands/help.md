@@ -11,36 +11,36 @@ Autonomous Development System for Claude Code
 ## Quick Start
 1. **Start a new project:**
    ```
-   /orch:start
+   /orchestrator:start
    ```
    Follow the prompts to describe your project.
 2. **Begin autonomous development:**
    ```
-   /orch:continue
+   /orchestrator:continue
    ```
    The orchestrator will execute tasks automatically.
 3. **Check progress:**
    ```
-   /orch:status
+   /orchestrator:status
    ```
    View current phase, completed tasks, and blockers.
 ---
 ## Commands
 | Command | Description |
 |---------|-------------|
-| `/orch:start` | Initialize a new project from an idea |
-| `/orch:continue` | Run autonomous development loop |
-| `/orch:status` | Show progress dashboard |
-| `/orch:tasks` | List all tasks with status |
-| `/orch:pause` | Pause after current task |
-| `/orch:resume` | Resume paused session |
-| `/orch:rollback <CP>` | Rollback to checkpoint |
-| `/orch:help` | Show this documentation |
+| `/orchestrator:start` | Initialize a new project from an idea |
+| `/orchestrator:continue` | Run autonomous development loop |
+| `/orchestrator:status` | Show progress dashboard |
+| `/orchestrator:tasks` | List all tasks with status |
+| `/orchestrator:pause` | Pause after current task |
+| `/orchestrator:resume` | Resume paused session |
+| `/orchestrator:rollback <CP>` | Rollback to checkpoint |
+| `/orchestrator:help` | Show this documentation |
 ---
 ## Development Lifecycle
 ```
 ┌─────────────┐
-│  IDEATION   │ ← /orch:start
+│  IDEATION   │ ← /orchestrator:start
 └──────┬──────┘
        ▼
 ┌─────────────┐
@@ -56,7 +56,7 @@ Autonomous Development System for Claude Code
 └──────┬──────┘
        ▼
 ┌─────────────┐
-│IMPLEMENTATION│ ← /orch:continue (autonomous loop)
+│IMPLEMENTATION│ ← /orchestrator:continue (autonomous loop)
 └──────┬──────┘
        ▼
 ┌─────────────┐

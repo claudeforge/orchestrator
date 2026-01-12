@@ -33,7 +33,7 @@ Gracefully pause the orchestrator after the current task completes.
    **Currently Running:**
    - TASK-025: Create user dashboard (frontend-dev)
    **To Resume:**
-   Run `/orch:resume` to continue development.
+   Run `/orchestrator:resume` to continue development.
    **Progress Saved:**
    All progress is automatically saved. You can safely close this session.
    ```
@@ -41,4 +41,4 @@ Gracefully pause the orchestrator after the current task completes.
 - Pause is graceful - waits for current task to complete
 - State is always saved after each task
 - Resume continues from exactly where it left off
-- Use `/orch:status` to check current state
+- Use `/orchestrator:status` to check current state

@@ -7,7 +7,7 @@ Resume a paused orchestrator session.
 ## Instructions
 1. Check if pause flag exists at `.claude/orchestrator/.pause`
 2. If exists, remove it and update state
-3. Then trigger `/orch:continue` to resume
+3. Then trigger `/orchestrator:continue` to resume
 ## Actions
 1. **Check pause flag:**
    - If `.claude/orchestrator/.pause` exists, read and delete it
@@ -30,7 +30,7 @@ Resume a paused orchestrator session.
    - Phase: implementation
    - Progress: 24/40 tasks (60%)
    **Resuming autonomous development...**
-   [Continue with /orch:continue logic]
+   [Continue with /orchestrator:continue logic]
    ```
 ## If Not Paused
 ```markdown
@@ -39,6 +39,6 @@ The orchestrator is not currently paused.
 **Current Status:**
 - Phase: [phase]
 - Progress: [X/Y] tasks
-Run `/orch:continue` to start/continue development.
-Run `/orch:status` for detailed status.
+Run `/orchestrator:continue` to start/continue development.
+Run `/orchestrator:status` for detailed status.
 ```

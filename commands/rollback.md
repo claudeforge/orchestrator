@@ -21,7 +21,7 @@ Rollback project state to a previous checkpoint.
    | CP-004 | 10:30 | implementation | 20 | abc123 |
    | CP-003 | 09:45 | implementation | 15 | def456 |
    | CP-002 | 09:00 | planning | 10 | ghi789 |
-   Run `/orch:rollback CP-003` to rollback to a specific checkpoint.
+   Run `/orchestrator:rollback CP-003` to rollback to a specific checkpoint.
    ```
 2. **Verify checkpoint exists:**
    - Check `.claude/orchestrator/checkpoints/[CP-XXX].json`
@@ -53,7 +53,7 @@ Rollback project state to a previous checkpoint.
    **Git Status:**
    - Reset to commit: def456
    - Working directory clean
-   Run `/orch:continue` to resume from this point.
+   Run `/orchestrator:continue` to resume from this point.
    ```
 ## Git Rollback (Optional)
 Ask user if they want to rollback git as well:

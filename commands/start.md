@@ -129,8 +129,8 @@ After initialization, display:
 4. [TASK-004] Setup database
 5. [TASK-005] Create base components
 ### Next Steps
-Run `/orch:continue` to begin autonomous development.
-Run `/orch:status` to check progress at any time.
+Run `/orchestrator:continue` to begin autonomous development.
+Run `/orchestrator:status` to check progress at any time.
 ```
 ## Important Notes
 1. **State Directory Structure:**

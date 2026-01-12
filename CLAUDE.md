@@ -8,11 +8,21 @@ Autonomous Development Orchestrator for Claude Code. This system transforms idea
 
 From initial concept to fully tested, documented, and deployed application using AI agents working in coordination.
 
+## Installation
+
+```bash
+# Add the marketplace
+/plugin marketplace add claudeforge/orchestrator
+
+# Install the plugin
+/plugin install orchestrator@claudeforge-orchestrator
+```
+
 ## Architecture Overview
 
 ```
 ORCHESTRATOR CORE
-├── COMMAND INTERFACE (/orch:*)
+├── COMMAND INTERFACE (/orchestrator:*)
 │   └── start, continue, status, tasks, pause, rollback
 ├── BRAIN (Orchestrator Agent - Opus)
 │   ├── State Machine (6 phases)
@@ -40,18 +50,22 @@ ORCHESTRATOR CORE
 
 | Command | Description |
 |---------|-------------|
-| `/orch:start` | Start new project from idea |
-| `/orch:continue` | Resume autonomous development |
-| `/orch:status` | Show progress dashboard |
-| `/orch:tasks` | List all tasks with status |
-| `/orch:pause` | Pause after current task |
-| `/orch:rollback` | Revert to checkpoint |
+| `/orchestrator:start` | Start new project from idea |
+| `/orchestrator:continue` | Resume autonomous development |
+| `/orchestrator:status` | Show progress dashboard |
+| `/orchestrator:tasks` | List all tasks with status |
+| `/orchestrator:pause` | Pause after current task |
+| `/orchestrator:rollback` | Revert to checkpoint |
 
 ## Directory Structure
 
 ```
 orchestrator/
-├── commands/          # Slash commands (/orch:*)
+├── .claude-plugin/    # Plugin configuration
+│   ├── marketplace.json
+│   ├── plugin.json
+│   └── hooks.json
+├── commands/          # Slash commands (/orchestrator:*)
 ├── agents/            # Specialized subagents
 ├── skills/            # Knowledge packages
 ├── scripts/

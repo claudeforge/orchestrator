@@ -119,7 +119,7 @@ export class StateManager {
   load(): ProjectState {
     if (!this.exists()) {
       throw new Error(
-        'No project state found. Run /orch:start to initialize a project.'
+        'No project state found. Run /orchestrator:start to initialize a project.'
       );
     }
 

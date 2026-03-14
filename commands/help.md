@@ -131,6 +131,6 @@ Edit `.claude/orchestrator/state/project.json` config:
 ```
 ---
 ## Need Help?
-- GitHub: github.com/claudeforge/orchestrator
-- Issues: github.com/claudeforge/orchestrator/issues
+- GitHub: github.com/devsforge/orchestrator
+- Issues: github.com/devsforge/orchestrator/issues
 ```

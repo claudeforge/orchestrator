@@ -12,10 +12,10 @@ From initial concept to fully tested, documented, and deployed application using
 
 ```bash
 # Add the marketplace
-/plugin marketplace add claudeforge/orchestrator
+/plugin marketplace add devsforge/orchestrator
 
 # Install the plugin
-/plugin install orchestrator@claudeforge-orchestrator
+/plugin install orchestrator@devsforge-orchestrator
 ```
 
 ## Architecture Overview

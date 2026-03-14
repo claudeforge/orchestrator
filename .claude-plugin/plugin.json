@@ -3,9 +3,9 @@
   "description": "Autonomous Development Orchestrator - Transform ideas into production-ready applications through multi-agent pipeline. Spec → Plan → Tasks → 100% Working App.",
   "version": "0.1.0",
   "author": {
-    "name": "ClaudeForge"
+    "name": "DevsForge"
   },
-  "repository": "https://github.com/claudeforge/orchestrator",
+  "repository": "https://github.com/devsforge/orchestrator",
   "license": "MIT",
   "hooks": "./.claude-plugin/hooks.json"
 }

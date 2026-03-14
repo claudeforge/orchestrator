@@ -1,14 +1,14 @@
 {
-  "name": "@claudeforge/orchestrator",
+  "name": "@devsforge/orchestrator",
   "version": "1.0.0",
   "description": "Autonomous Development Orchestrator for Claude Code - Spec to Production Pipeline",
   "author": {
-    "name": "ClaudeForge",
-    "url": "https://github.com/claudeforge"
+    "name": "DevsForge",
+    "url": "https://github.com/devsforge"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/claudeforge/orchestrator"
+    "url": "https://github.com/devsforge/orchestrator"
   },
   "license": "MIT",
   "keywords": [

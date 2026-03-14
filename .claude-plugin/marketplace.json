@@ -1,8 +1,7 @@
 {
-  "name": "claudeforge-orchestrator",
+  "name": "devsforge-orchestrator",
   "owner": {
-    "name": "ClaudeForge",
-    "email": "info@claudeforge.dev"
+    "name": "DevsForge"
   },
   "metadata": {
     "description": "Autonomous Development Orchestrator - Transform ideas into production-ready applications through multi-agent pipeline",
@@ -15,7 +14,7 @@
       "description": "Autonomous Development Orchestrator for Claude Code. Spec → Plan → Tasks → 100% Working App. Multi-agent pipeline with zero manual intervention.",
       "version": "v0.1.0",
       "author": {
-        "name": "ClaudeForge"
+        "name": "DevsForge"
       },
       "license": "MIT",
       "keywords": [

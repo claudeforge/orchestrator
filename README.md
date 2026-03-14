@@ -1,3 +1,7 @@
+> **Disclaimer:** Claude Orchestrator is an independent, community-developed open-source project. It is **not** affiliated with, endorsed by, or officially associated with Anthropic, PBC or any of its products (including Claude, Claude Code, or the Claude API). "Claude" and "Anthropic" are trademarks of Anthropic, PBC. This project is a third-party plugin built by the community to extend Claude Code functionality.
+
+---
+
 # Claude Orchestrator
 
 **Autonomous Development System for Claude Code**
@@ -12,10 +16,10 @@ Spec → Plan → Tasks → 100% Working App
 
 ```bash
 # Add the marketplace
-/plugin marketplace add claudeforge/orchestrator
+/plugin marketplace add devsforge/orchestrator
 
 # Install the plugin
-/plugin install orchestrator@claudeforge-orchestrator
+/plugin install orchestrator@devsforge-orchestrator
 ```
 
 ## Features
@@ -306,6 +310,6 @@ MIT
 
 ---
 
-**Repository:** [github.com/claudeforge/orchestrator](https://github.com/claudeforge/orchestrator)
+**Repository:** [github.com/devsforge/orchestrator](https://github.com/devsforge/orchestrator)
 
 Built with Claude Code

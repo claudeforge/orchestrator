@@ -1,33 +1,21 @@
 ---
 name: project-planning
-description: Expert knowledge in project planning, requirements gathering, user stories, and scope management. Use when planning new projects or features.
+description: "Creates project briefs, writes user stories with acceptance criteria, breaks epics into tasks, estimates effort with T-shirt sizing, and defines scope boundaries. Use when planning a new project, writing a PRD, creating a roadmap, defining MVP scope, or breaking features into user stories."
 allowed-tools: Read, Write, WebSearch
 ---
 
 # Project Planning Skill
 
-Comprehensive knowledge for planning software projects from ideation to execution.
+## Workflow
 
-## Planning Methodology
+1. **Discover** — Gather problem, users, constraints, success metrics
+2. **Scope** — Define in-scope vs out-of-scope; apply MoSCoW prioritization
+3. **Break down** — Write user stories with acceptance criteria; group into epics
+4. **Estimate** — T-shirt size each story; flag XL items for further breakdown
+5. **Assess risk** — Identify top risks and mitigations
+6. **Validate** — Confirm scope with stakeholder before proceeding to architecture
 
-### 1. Discovery Phase
-
-**Questions to Ask:**
-- What problem are we solving?
-- Who are the target users?
-- What does success look like?
-- What are the constraints?
-- What's the timeline?
-
-### 2. Requirements Gathering
-
-**Requirement Types:**
-- **Functional:** What the system must do
-- **Non-Functional:** How well it must do it
-- **Technical:** Implementation constraints
-- **Business:** Organizational needs
-
-### 3. User Story Format
+## User Story Format
 
 ```markdown
 **As a** [type of user]
@@ -43,15 +31,10 @@ Comprehensive knowledge for planning software projects from ideation to executio
 **Estimate:** S/M/L/XL
 ```
 
-### 4. Prioritization Framework
+## Prioritization
 
-**MoSCoW Method:**
-- **Must Have:** Critical for MVP
-- **Should Have:** Important but not critical
-- **Could Have:** Nice to have
-- **Won't Have:** Out of scope (for now)
+**MoSCoW:** Must Have (MVP-critical) > Should Have > Could Have > Won't Have (deferred).
 
-**Priority Levels:**
 | Priority | Description | Timeline |
 |----------|-------------|----------|
 | P0 | Critical | Immediate |
@@ -59,33 +42,17 @@ Comprehensive knowledge for planning software projects from ideation to executio
 | P2 | Medium | Next sprint |
 | P3 | Low | Backlog |
 
-### 5. Estimation Techniques
+## Estimation
 
-**T-Shirt Sizing:**
 | Size | Complexity | Time |
 |------|------------|------|
 | XS | Trivial | < 1 hour |
 | S | Simple | 1-4 hours |
 | M | Medium | 4-8 hours |
 | L | Complex | 1-3 days |
-| XL | Very Complex | > 3 days |
+| XL | Very Complex | > 3 days — break down further |
 
-**Story Points (Fibonacci):**
-1, 2, 3, 5, 8, 13, 21
-
-### 6. Scope Management
-
-**In Scope:**
-- Explicitly defined features
-- Agreed requirements
-- Documented acceptance criteria
-
-**Out of Scope:**
-- Features deferred to future
-- Explicitly excluded items
-- Nice-to-haves beyond MVP
-
-### 7. Risk Assessment
+## Risk Assessment
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|------------|--------|------------|
@@ -95,7 +62,8 @@ Comprehensive knowledge for planning software projects from ideation to executio
 
 ## Templates
 
-### Project Brief Template
+### Project Brief
+
 ```markdown
 # Project: [Name]
 
@@ -108,7 +76,6 @@ Comprehensive knowledge for planning software projects from ideation to executio
 ## Goals
 1. [Primary goal]
 2. [Secondary goal]
-3. [Tertiary goal]
 
 ## Success Metrics
 - [Metric 1]: [Target]
@@ -129,7 +96,8 @@ Comprehensive knowledge for planning software projects from ideation to executio
 - Launch: [Date]
 ```
 
-### Epic Template
+### Epic
+
 ```markdown
 # Epic: [Name]
 

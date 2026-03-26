@@ -1,28 +1,25 @@
 ---
 name: testing-strategies
-description: Expert knowledge in testing methodologies, test patterns, and quality assurance. Use when writing tests or setting up testing infrastructure.
+description: "Writes unit tests with Vitest, component tests with React Testing Library, integration tests for Hono APIs, and E2E tests with Playwright. Configures mocks with MSW and vi.mock. Use when writing tests, fixing test failures, setting up test infrastructure, improving coverage, or mocking API responses."
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # Testing Strategies Skill
 
-Comprehensive testing strategies and patterns for ensuring code quality.
+## When to Use Each Test Type
 
-## Testing Pyramid
+| Scenario | Test type | Tool |
+|----------|-----------|------|
+| Pure function or service logic | Unit | Vitest |
+| React component behavior | Component | React Testing Library |
+| API route or DB repository | Integration | Hono testClient / real DB |
+| Critical user journey | E2E | Playwright |
 
-```
-              /\
-             /E2E\           5%  - Critical user journeys
-            /------\
-           / Integ  \        15% - Service boundaries
-          /----------\
-         /    Unit    \      80% - Component logic
-        /--------------\
-```
+Aim for ~80% unit, ~15% integration, ~5% E2E.
 
 ## Unit Testing Patterns
 
-### Arrange-Act-Assert (AAA)
+### Arrange-Act-Assert
 ```typescript
 describe('calculateTotal', () => {
   it('should apply discount correctly', () => {
@@ -46,7 +43,6 @@ describe('UserService', () => {
   let mockRepo: MockUserRepository;
 
   beforeEach(() => {
-    // Fresh instances for each test
     mockRepo = new MockUserRepository();
     service = new UserService(mockRepo);
   });
@@ -68,31 +64,6 @@ describe('validateEmail', () => {
     ['no@tld', false],
   ])('validates %s as %s', (email, expected) => {
     expect(validateEmail(email)).toBe(expected);
-  });
-});
-```
-
-### Testing Edge Cases
-```typescript
-describe('divide', () => {
-  it('should handle positive numbers', () => {
-    expect(divide(10, 2)).toBe(5);
-  });
-
-  it('should handle negative numbers', () => {
-    expect(divide(-10, 2)).toBe(-5);
-  });
-
-  it('should handle zero dividend', () => {
-    expect(divide(0, 5)).toBe(0);
-  });
-
-  it('should throw on division by zero', () => {
-    expect(() => divide(10, 0)).toThrow('Division by zero');
-  });
-
-  it('should handle floating point', () => {
-    expect(divide(1, 3)).toBeCloseTo(0.333, 2);
   });
 });
 ```
@@ -154,22 +125,6 @@ describe('useCounter', () => {
     expect(result.current.count).toBe(1);
   });
 });
-
-describe('useAsync', () => {
-  it('handles async operation', async () => {
-    const mockFetch = vi.fn().mockResolvedValue({ data: 'test' });
-
-    const { result } = renderHook(() => useAsync(mockFetch));
-
-    expect(result.current.isLoading).toBe(true);
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    expect(result.current.data).toEqual({ data: 'test' });
-  });
-});
 ```
 
 ## Integration Testing
@@ -187,48 +142,18 @@ describe('Users API', () => {
   });
 
   it('creates and retrieves user', async () => {
-    // Create
     const createRes = await client.api.v1.users.$post({
       json: { name: 'Test', email: 'test@example.com', password: 'pass123' },
     });
     expect(createRes.status).toBe(201);
     const created = await createRes.json();
 
-    // Retrieve
     const getRes = await client.api.v1.users[':id'].$get({
       param: { id: created.data.id },
     });
     expect(getRes.status).toBe(200);
     const retrieved = await getRes.json();
-
     expect(retrieved.data.email).toBe('test@example.com');
-  });
-});
-```
-
-### Database Testing
-```typescript
-describe('UserRepository', () => {
-  const repo = new UserRepository();
-
-  beforeEach(async () => {
-    await db.delete(users);
-  });
-
-  it('creates and finds user', async () => {
-    const created = await repo.create({
-      name: 'Test User',
-      email: 'test@example.com',
-    });
-
-    const found = await repo.findById(created.id);
-
-    expect(found).toEqual(created);
-  });
-
-  it('returns null for non-existent user', async () => {
-    const found = await repo.findById('non-existent-id');
-    expect(found).toBeNull();
   });
 });
 ```
@@ -240,21 +165,17 @@ import { test, expect } from '@playwright/test';
 
 test.describe('User Flow', () => {
   test('complete registration and login flow', async ({ page }) => {
-    // Register
     await page.goto('/register');
     await page.fill('[name="email"]', 'new@example.com');
     await page.fill('[name="password"]', 'Password123!');
     await page.click('button[type="submit"]');
 
-    // Verify redirect to login
     await expect(page).toHaveURL('/login');
 
-    // Login
     await page.fill('[name="email"]', 'new@example.com');
     await page.fill('[name="password"]', 'Password123!');
     await page.click('button[type="submit"]');
 
-    // Verify dashboard access
     await expect(page).toHaveURL('/dashboard');
     await expect(page.locator('h1')).toContainText('Dashboard');
   });
@@ -287,7 +208,6 @@ const handlers = [
 
 export const server = setupServer(...handlers);
 
-// Setup in test file
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
@@ -300,7 +220,7 @@ vi.mock('./api', () => ({
   fetchUsers: vi.fn().mockResolvedValue([{ id: '1', name: 'Test' }]),
 }));
 
-// Mock implementation
+// Mock implementation with sequential returns
 const mockFetch = vi.fn();
 mockFetch
   .mockResolvedValueOnce({ data: 'first' })
@@ -310,15 +230,6 @@ mockFetch
 const spy = vi.spyOn(console, 'log');
 expect(spy).toHaveBeenCalledWith('message');
 ```
-
-## Coverage Goals
-
-| Metric | Minimum | Target |
-|--------|---------|--------|
-| Statements | 70% | 85% |
-| Branches | 65% | 80% |
-| Functions | 70% | 85% |
-| Lines | 70% | 85% |
 
 ## Test Organization
 

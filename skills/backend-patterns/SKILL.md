@@ -1,14 +1,12 @@
 ---
 name: backend-patterns
-description: Expert knowledge in API design, authentication, caching, and backend best practices. Use for backend development tasks.
+description: "Designs RESTful API endpoints, implements JWT authentication and role-based authorization, validates input with Zod schemas, configures Redis caching, sets up rate limiting, and structures Drizzle ORM repositories with transactions. Use when building API routes, implementing login/auth flows, adding request validation, setting up caching layers, or writing database queries with Hono."
 allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
 # Backend Patterns Skill
 
-Modern backend patterns and best practices for building scalable APIs.
-
-## API Design Patterns
+## API Design
 
 ### RESTful Conventions
 ```
@@ -31,28 +29,18 @@ POST   /api/v1/passwords/reset
 
 ### Response Format
 ```typescript
-// Success response
 interface SuccessResponse<T> {
   success: true;
   data: T;
-  meta?: {
-    page: number;
-    perPage: number;
-    total: number;
-    totalPages: number;
-  };
+  meta?: { page: number; perPage: number; total: number; totalPages: number };
 }
 
-// Error response
 interface ErrorResponse {
   success: false;
   error: {
     code: string;
     message: string;
-    details?: Array<{
-      field: string;
-      message: string;
-    }>;
+    details?: Array<{ field: string; message: string }>;
   };
 }
 ```
@@ -71,11 +59,16 @@ interface ErrorResponse {
 | 422 | Unprocessable | Business logic error |
 | 500 | Server Error | Unexpected error |
 
-## Authentication Patterns
+## Authentication
 
 ### JWT Flow
+
+1. User POSTs credentials to `/auth/login`
+2. Server verifies, returns access token (15 min) + refresh token (7 days)
+3. Client sends `Authorization: Bearer <token>` on subsequent requests
+4. On 401, client uses refresh token to get a new access token
+
 ```typescript
-// Login - generate tokens
 async function login(email: string, password: string) {
   const user = await db.users.findByEmail(email);
   if (!user || !await verifyPassword(password, user.password)) {
@@ -85,7 +78,6 @@ async function login(email: string, password: string) {
   const accessToken = await generateAccessToken(user);
   const refreshToken = await generateRefreshToken(user);
 
-  // Store refresh token
   await db.refreshTokens.create({
     userId: user.id,
     token: refreshToken,
@@ -95,7 +87,6 @@ async function login(email: string, password: string) {
   return { accessToken, refreshToken, user };
 }
 
-// Token generation
 async function generateAccessToken(user: User) {
   return jwt.sign(
     { sub: user.id, email: user.email, role: user.role },
@@ -103,32 +94,18 @@ async function generateAccessToken(user: User) {
     { expiresIn: '15m' }
   );
 }
-
-// Token refresh
-async function refreshAccessToken(refreshToken: string) {
-  const stored = await db.refreshTokens.findByToken(refreshToken);
-  if (!stored || stored.expiresAt < new Date()) {
-    throw new HTTPException(401, { message: 'Invalid refresh token' });
-  }
-
-  const user = await db.users.findById(stored.userId);
-  return generateAccessToken(user);
-}
 ```
 
 ### Auth Middleware
 ```typescript
 export async function authMiddleware(c: Context, next: Next) {
   const authHeader = c.req.header('Authorization');
-
   if (!authHeader?.startsWith('Bearer ')) {
     throw new HTTPException(401, { message: 'Missing token' });
   }
 
-  const token = authHeader.slice(7);
-
   try {
-    const payload = await jwt.verify(token, process.env.JWT_SECRET);
+    const payload = await jwt.verify(authHeader.slice(7), process.env.JWT_SECRET);
     c.set('userId', payload.sub);
     c.set('userRole', payload.role);
     await next();
@@ -137,11 +114,9 @@ export async function authMiddleware(c: Context, next: Next) {
   }
 }
 
-// Role-based authorization
 export function requireRole(...roles: string[]) {
   return async (c: Context, next: Next) => {
-    const userRole = c.get('userRole');
-    if (!roles.includes(userRole)) {
+    if (!roles.includes(c.get('userRole'))) {
       throw new HTTPException(403, { message: 'Forbidden' });
     }
     await next();
@@ -149,13 +124,11 @@ export function requireRole(...roles: string[]) {
 }
 ```
 
-## Validation Patterns
+## Validation with Zod
 
-### Zod Schemas
 ```typescript
 import { z } from 'zod';
 
-// User schemas
 export const createUserSchema = z.object({
   email: z.string().email('Invalid email'),
   name: z.string().min(2).max(100),
@@ -165,9 +138,6 @@ export const createUserSchema = z.object({
     .regex(/[0-9]/, 'Must contain number'),
 });
 
-export const updateUserSchema = createUserSchema.partial();
-
-// Query params
 export const paginationSchema = z.object({
   page: z.coerce.number().min(1).default(1),
   perPage: z.coerce.number().min(1).max(100).default(20),
@@ -184,12 +154,8 @@ app.post('/users', zValidator('json', createUserSchema), async (c) => {
 
 ## Error Handling
 
-### Central Error Handler
 ```typescript
 export function errorHandler(err: Error, c: Context) {
-  console.error('Error:', err);
-
-  // HTTP exceptions
   if (err instanceof HTTPException) {
     return c.json({
       success: false,
@@ -197,7 +163,6 @@ export function errorHandler(err: Error, c: Context) {
     }, err.status);
   }
 
-  // Validation errors
   if (err instanceof ZodError) {
     return c.json({
       success: false,
@@ -212,15 +177,13 @@ export function errorHandler(err: Error, c: Context) {
     }, 400);
   }
 
-  // Database errors
-  if (err.code === '23505') { // Unique violation
+  if (err.code === '23505') {
     return c.json({
       success: false,
       error: { code: 'CONFLICT', message: 'Resource already exists' },
     }, 409);
   }
 
-  // Unknown errors
   return c.json({
     success: false,
     error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
@@ -228,31 +191,22 @@ export function errorHandler(err: Error, c: Context) {
 }
 ```
 
-## Caching Patterns
+## Caching with Redis
 
-### Redis Caching
 ```typescript
 import { Redis } from 'ioredis';
-
 const redis = new Redis(process.env.REDIS_URL);
 
 // Cache-aside pattern
 async function getUserById(id: string): Promise<User> {
   const cacheKey = `user:${id}`;
-
-  // Try cache first
   const cached = await redis.get(cacheKey);
-  if (cached) {
-    return JSON.parse(cached);
-  }
+  if (cached) return JSON.parse(cached);
 
-  // Fetch from database
   const user = await db.users.findById(id);
   if (!user) throw new HTTPException(404);
 
-  // Cache for 5 minutes
   await redis.setex(cacheKey, 300, JSON.stringify(user));
-
   return user;
 }
 
@@ -269,41 +223,26 @@ async function updateUser(id: string, data: UpdateUserInput) {
 ```typescript
 import { rateLimiter } from 'hono-rate-limiter';
 
-// Apply rate limiting
-app.use(
-  '/api/*',
-  rateLimiter({
-    windowMs: 60 * 1000, // 1 minute
-    limit: 100, // 100 requests per minute
-    keyGenerator: (c) => c.get('userId') || c.req.header('x-forwarded-for'),
-  })
-);
+app.use('/api/*', rateLimiter({
+  windowMs: 60 * 1000,
+  limit: 100,
+  keyGenerator: (c) => c.get('userId') || c.req.header('x-forwarded-for'),
+}));
 
 // Stricter limits for auth endpoints
-app.use(
-  '/api/auth/*',
-  rateLimiter({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    limit: 5, // 5 attempts
-  })
-);
+app.use('/api/auth/*', rateLimiter({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+}));
 ```
 
 ## Database Patterns
 
-### Repository Pattern
+### Repository
 ```typescript
 class UserRepository {
   async findById(id: string): Promise<User | null> {
-    return db.query.users.findFirst({
-      where: eq(users.id, id),
-    });
-  }
-
-  async findByEmail(email: string): Promise<User | null> {
-    return db.query.users.findFirst({
-      where: eq(users.email, email),
-    });
+    return db.query.users.findFirst({ where: eq(users.id, id) });
   }
 
   async create(data: CreateUserInput): Promise<User> {
@@ -326,17 +265,15 @@ class UserRepository {
 }
 ```
 
-### Transaction Pattern
+### Transactions
 ```typescript
 async function createOrder(userId: string, items: OrderItem[]) {
   return db.transaction(async (tx) => {
-    // Create order
     const [order] = await tx
       .insert(orders)
       .values({ userId, status: 'pending' })
       .returning();
 
-    // Create order items
     await tx.insert(orderItems).values(
       items.map(item => ({
         orderId: order.id,
@@ -345,7 +282,6 @@ async function createOrder(userId: string, items: OrderItem[]) {
       }))
     );
 
-    // Update inventory
     for (const item of items) {
       await tx
         .update(products)
